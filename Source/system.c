@@ -20,31 +20,31 @@ See "STM32G4 Series - Clock Generation.png" in subfolder "Documentation"
 
 Oscillators:
  +- HSI16 (16 MHz internal RC)
- +- HSE (4–48 MHz external quartz/resonator)
- +- MSI (100 kHz – 48 MHz multi-speed internal)
+ +- HSE (4â€“48 MHz external quartz/resonator)
+ +- MSI (100 kHz â€“ 48 MHz multi-speed internal)
  +- HSI48 (48 MHz internal, for USB/RNG/CRS)
  +- LSE (32.768 kHz external quartz, RTC)
  +- LSI (~32 kHz internal RC, watchdog/RTC)
 
 PLL Block:
  +- Input: HSI16 / HSE / MSI
- +- PLLM (÷1..16)  --> divides input
- +- PLLN (×8..127) --> multiplies to VCO (64–344 MHz)
+ +- PLLM (Ã·1..16)  --> divides input
+ +- PLLN (Ã—8..127) --> multiplies to VCO (64â€“344 MHz)
  +- Outputs:
-     +- PLLR (÷2,4,6,8) --> SYSCLK
-     +- PLLQ (÷2,4,6,8) --> USB, SAI, RNG
-     +- PLLP (÷2,4,6,8,10,12,14,16, etc.) --> ADC, other peripherals
+     +- PLLR (Ã·2,4,6,8) --> SYSCLK
+     +- PLLQ (Ã·2,4,6,8) --> USB, SAI, RNG
+     +- PLLP (Ã·2,4,6,8,10,12,14,16, etc.) --> ADC, other peripherals
 
 System Clock (SYSCLK):
  +- Source mux: HSI16 / HSE / MSI / PLLR
  +- Max 170 MHz
 
 AHB Prescaler:
- +- HCLK = SYSCLK ÷ AHB prescaler
+ +- HCLK = SYSCLK Ã· AHB prescaler
 
 APB Prescalers:
- +- PCLK1 = HCLK ÷ APB1 prescaler (max 80 MHz)
- +- PCLK2 = HCLK ÷ APB2 prescaler (max 80 MHz)
+ +- PCLK1 = HCLK Ã· APB1 prescaler (max 80 MHz)
+ +- PCLK2 = HCLK Ã· APB2 prescaler (max 80 MHz)
 
 Peripheral Clock Domains:
  +- USB:
@@ -96,6 +96,10 @@ bool system_init(void)
     #if HSE_VALUE == 8000000    // 8 MHz quartz 
         RCC_OscInitStruct.PLL.PLLM        = RCC_PLLM_DIV1;          // divide 8 MHz input clock / 1 --> 8 MHz
         RCC_OscInitStruct.PLL.PLLN        = 40;                     // multiply 8 MHz x 40 --> VCO frequency = 320 MHz (maximum 344 MHz)
+    #elif HSE_VALUE == 24000000 // 24 MHz quartz 
+        RCC_OscInitStruct.PLL.PLLM        = RCC_PLLM_DIV3;          // 24 MHz / 3 = 8 MHz (ingresso PLL)
+        RCC_OscInitStruct.PLL.PLLN        = 40;                     // 8 MHz * 40 = 320 MHz (VCO)    
+   
     #elif HSE_VALUE == 25000000 // 25 MHz quartz 
         RCC_OscInitStruct.PLL.PLLM        = RCC_PLLM_DIV5;          // divide 25 MHz input clock / 5 --> 5 MHz
         RCC_OscInitStruct.PLL.PLLN        = 64;                     // multiply 5 MHz x 64 --> VCO frequency = 320 MHz (maximum 344 MHz)
@@ -116,7 +120,7 @@ bool system_init(void)
     // Bugfix: The legacy firmware used a PCLK1 and PCLK2 of 160 MHz which is outside the guaranteed operating conditions.
     // The maximum is 80 MHz otherwise these buses are heavily overclocked.
     // HCLK == SystemCoreClock is used for Cortex-M4, Memory, DMA, Flash, SRAM, SysTick timer, High-speed peripherals.
-    // PCLK1 is used for Lower -speed peripherals: I2C, USART2/3, LPUART, SPI2/3, CAN/FDCAN, DAC, TIM2–TIM7.
+    // PCLK1 is used for Lower -speed peripherals: I2C, USART2/3, LPUART, SPI2/3, CAN/FDCAN, DAC, TIM2â€“TIM7.
     // PCLK2 is used for Higher-speed peripherals: USART1, SPI1, TIM1, TIM8, ADCs.
     // See "STM32G4 Series - Clock Generation.png" in subfolder "Documentation"
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -195,7 +199,7 @@ uint32_t system_get_can_clock()
     return canfd_clock;
 }
 
-// 1 µs timer
+// 1 Âµs timer
 void system_init_timestamp()
 {
     // Timer 3 uses PCLK1 (80 MHz)
@@ -236,7 +240,7 @@ void HAL_FDCAN_TimestampWraparoundCallback(FDCAN_HandleTypeDef *hfdcan)
 
 // ---------
 
-// get timestamp with 1 µs precision
+// get timestamp with 1 Âµs precision
 // Timer3 must be used because this is written into FDCAN_TxEventFifoTypeDef.TxTimestamp and FDCAN_RxHeaderTypeDef.RxTimestamp
 // Timer3 provides only the low 16 bit. The high 16 bit come from the wrap around callback.
 uint32_t system_get_timestamp()
@@ -333,7 +337,7 @@ eFeedback system_set_option_bytes(eOptionBytes e_Option)
 
     // IMPORTANT:
     // If previous errors are not cleared, HAL_FLASHEx_OBProgram() will fail.
-    // This was wrong in all legacy firmware versions. (fixed by ElmüSoft)
+    // This was wrong in all legacy firmware versions. (fixed by ElmÃ¼Soft)
     // The programmers did not even notice this bug because of a non-existent error handling (sloppy code).
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
 
