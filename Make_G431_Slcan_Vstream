@@ -4,20 +4,20 @@
 ######################################
 #
 # This makefile compiles for the CANable board from 
-# Jhoinrch which has a 25 MHz quartz
+# Vstream which has a 24 MHz quartz
 #
 # Compile this by typing:
-# make -s -f Make_G431_Slcan_Jhoinrch
+# make -s -f Make_G431_Slcan_Vstream
 #
 #######################################
 
 # TARGET_BOARD and TARGET_MCU: maximum 24 characters!
 
 TARGET_FIRMWARE = Slcan
-TARGET_BOARD    = Jhoinrch
+TARGET_BOARD    = Vstream
 TARGET_MCU      = STM32G431xx
 
-# This board has a 25 MHz quartz.
+# This board has a 24 MHz quartz.
 QUARTZ_FREQU    = 24000000
 
 # name of the compiled files (*.bin, *.hex, *.elf)
