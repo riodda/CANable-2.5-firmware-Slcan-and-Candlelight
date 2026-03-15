@@ -19,6 +19,8 @@ TARGET_MCU      = STM32G431xx
 
 # This board has a 24 MHz quartz.
 QUARTZ_FREQU    = 24000000
+# Converte la variabile QUARTZ_FREQU in una definizione per il preprocessore
+CDEFS += -DHSE_VALUE=$(QUARTZ_FREQU)
 
 # name of the compiled files (*.bin, *.hex, *.elf)
 TARGET_FILE = STM32G431_Slcan2.5_Vstream
